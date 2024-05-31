@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background - Círculos</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* Evita el scroll */
+            background-color: #e9e9f9; /* Color de fondo */
+        }
+
+        .custom-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* No intercepta eventos del ratón */
+        }
+
+        .custom-circle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: lighten;
+            transition: transform 0.5s ease, opacity 0.5s ease, left 2s ease, top 2s ease;
+        }
+
+        .custom-orange {
+            background-color: #ff6600;
+        }
+
+        .custom-blue {
+            background-color: #3e4095;
+        }
+    </style>
+</head>
+<body>
+    <!-- Div independiente para los círculos -->
+    <div class="custom-background"></div>
+
+    <script>
+const circles = [];
+const numCircles = 40;
+
+// Función para generar un número aleatorio dentro de un rango
+function randomInRange(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+for (let i = 0; i < numCircles; i++) {
+    const circle = document.createElement('div');
+    circle.classList.add('custom-circle');
+    circle.classList.add(i % 2 === 0 ? 'custom-orange' : 'custom-blue');
+    const size = randomInRange(5, 30);
+    circle.style.width = `${size}px`;
+    circle.style.height = `${size}px`;
+    circle.style.opacity = (randomInRange(0.5, 1) * 0.7).toFixed(2);
+    circle.style.left = `${randomInRange(0, window.innerWidth)}px`;
+    circle.style.top = `${randomInRange(0, window.innerHeight)}px`;
+    
+    document.querySelector('.custom-background').appendChild(circle);
+    circles.push(circle);
+}
+
+function animateCircles() {
+    circles.forEach(circle => {
+        const deltaX = (Math.random() - 0.5) * 10;
+        const deltaY = (Math.random() - 0.5) * 10;
+        const newX = parseFloat(circle.style.left) + deltaX;
+        const newY = parseFloat(circle.style.top) + deltaY;
+
+        circle.style.left = `${newX}px`;
+        circle.style.top = `${newY}px`;
+
+        const scale = 1 + (Math.random() - 0.5) * 0.2;
+        circle.style.transform = `scale(${scale})`;
+    });
+}
+
+setInterval(animateCircles, 2000);
+
+document.querySelector('.custom-background').addEventListener('mousemove', (e) => {
+    circles.forEach((circle) => {
+        const rect = circle.getBoundingClientRect();
+        const circleX = rect.left + rect.width / 2;
+        const circleY = rect.top + rect.height / 2;
+        const dist = Math.hypot(circleX - e.clientX, circleY - e.clientY);
+        const maxDist = 200;
+        const scale = Math.max(1, 1 + (maxDist - dist) / maxDist);
+
+        circle.style.transform = `scale(${scale})`;
+    });
+});
+
+    </script>
+</body>
+</html>
